@@ -405,6 +405,41 @@ public class djVtkData extends djVtkObj {
 		System.out.println("That is all!");
 
 	}
+	
+	public void writePtsToVtkFile(String fileName) {
+		System.out.println("Begin to write file:" + fileName + "...");
+		FileWriter fw = null;
+		try {
+			fw = new FileWriter(fileName);
+			fw.write("# vtk DataFile Version 3.0\r\n");
+			fw.write("vtk output\r\n");
+			fw.write("ASCII\r\n");
+			fw.write("DATASET POLYDATA\r\n");
+			// print points info
+			fw.write("POINTS " + this.nPointNum + " float\r\n");
+			for (int i = 0; i < this.nPointNum; i++) {
+				fw.write(this.points.get(i).x + " " + this.points.get(i).y + " " + this.points.get(i).z + "\r\n");
+			}
+			
+			// print VERTICES info
+						fw.write("VERTICES " + this.nPointNum + " " + this.nPointNum * 2 + " \r\n");
+						for (int i = 0; i < this.nPointNum; i++) {
+							fw.write("1 " + i + "\r\n");
+						}
+
+		} catch (IOException ex) {
+			Logger.getLogger(djVtkData.class.getName()).log(Level.SEVERE, null, ex);
+		} finally {
+			try {
+				fw.close();
+			} catch (IOException ex) {
+				Logger.getLogger(djVtkData.class.getName()).log(Level.SEVERE, null, ex);
+			}
+		}
+		System.out.println("Write file done!");
+		System.out.println("That is all!");
+	
+	}
 
 	public void writeToVtkFile(String fileName) {
 		System.out.println("Begin to write file:" + fileName + "...");
@@ -443,10 +478,10 @@ public class djVtkData extends djVtkObj {
 				while (iterPointData.hasNext()) {
 					String tmpAttriName = (String) iterPointData.next();
 					//for render COLOR_SCALARS
-					fw.write("COLOR_SCALARS " + tmpAttriName + " 3 \r\n");
+					//fw.write("COLOR_SCALARS " + tmpAttriName + " 3 \r\n");
 					//end of for render COLOR_SCALARS
-//					fw.write("SCALARS " + tmpAttriName + " float 1 \r\n");
-//					fw.write("LOOKUP_TABLE default \r\n");
+					fw.write("SCALARS " + tmpAttriName + " float 1 \r\n");
+					fw.write("LOOKUP_TABLE default \r\n");
 					for (int i = 0; i < this.pointsScalarData.get(tmpAttriName).size(); i++) {
 						fw.write(this.pointsScalarData.get(tmpAttriName).get(i) + "\r\n");
 					}
