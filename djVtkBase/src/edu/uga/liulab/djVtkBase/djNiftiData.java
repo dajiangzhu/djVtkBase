@@ -46,7 +46,7 @@ public class djNiftiData {
 			offset = this.rawNiftiData.getImagePositionPatient();
 			// tranMatrix = this.rawNiftiData.getImageOrientationPatient();
 		} catch (Exception ex) {
-//			Logger.getLogger(djNiftiData.class.getName()).log(Level.SEVERE, null, ex);
+			// Logger.getLogger(djNiftiData.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}
 
@@ -89,7 +89,7 @@ public class djNiftiData {
 			in.close();
 			fstream.close();
 		} catch (Exception ex) {
-//			Logger.getLogger(djNiftiData.class.getName()).log(Level.SEVERE, null, ex);
+			// Logger.getLogger(djNiftiData.class.getName()).log(Level.SEVERE, null, ex);
 		}
 
 	}
@@ -126,7 +126,7 @@ public class djNiftiData {
 			tmpCoord[tmpCount++] = x;
 			result = Float.valueOf(String.valueOf(this.rawNiftiData.getPix(tmpCoord)));
 		} catch (Exception ex) {
-//			Logger.getLogger(djNiftiData.class.getName()).log(Level.SEVERE, null, ex);
+			// Logger.getLogger(djNiftiData.class.getName()).log(Level.SEVERE, null, ex);
 		}
 		return result;
 	}
@@ -141,13 +141,24 @@ public class djNiftiData {
 		for (int i = 0; i < 3; i++)
 			if (volumeCoord[i] < 0)
 				volumeCoord[i] = 0;
-    	if(volumeCoord[0]>=this.xSize)
-    		volumeCoord[0]=this.xSize-1;
-    	if(volumeCoord[1]>=this.ySize)
-    		volumeCoord[1]=this.ySize-1;
-    	if(volumeCoord[2]>=this.zSize)
-    		volumeCoord[2]=this.zSize-1;
+		if (volumeCoord[0] >= this.xSize)
+			volumeCoord[0] = this.xSize - 1;
+		if (volumeCoord[1] >= this.ySize)
+			volumeCoord[1] = this.ySize - 1;
+		if (volumeCoord[2] >= this.zSize)
+			volumeCoord[2] = this.zSize - 1;
 		return this.getValueBasedOnVolumeCoordinate(volumeCoord[0], volumeCoord[1], volumeCoord[2], t);
+	}
+
+	private boolean hasSig(int x, int y, int z) {
+		int count = 0;
+		for (int t = 0; t < this.tSize; t++)
+			if (Math.abs(this.getValueBasedOnVolumeCoordinate(x, y, z, t)) < 0.01)
+				count++;
+		if (count > (this.tSize / 2))
+			return false;
+		else
+			return true;
 	}
 
 	public float getValueBasedOnPhysicalCoordinateRange(float x, float y, float z, int t) {
@@ -166,12 +177,36 @@ public class djNiftiData {
 					int currentY = volumeCoord[1] + j;
 					int currentZ = volumeCoord[2] + k;
 					if (currentX > 0 && currentX < xSize && currentY > 0 && currentY < ySize && currentZ > 0
-							&& currentZ < zSize) {
+							&& currentZ < zSize && this.hasSig(currentX, currentY, currentZ)) {
 						result = result + this.getValueBasedOnVolumeCoordinate(currentX, currentY, currentZ, t);
 						count++;
 					}
 				}
 		return result / count;
 	}
+	
+//	public float[] getSigBasedOnPhysicalCoordinateRange(float x, float y, float z) {
+//		int[] volumeCoord;
+//		float[] physicalCoord = new float[3];
+//		physicalCoord[0] = x;
+//		physicalCoord[1] = y;
+//		physicalCoord[2] = z;
+//		volumeCoord = this.convertFromPhysicalToVolume(physicalCoord);
+//		float result = 0.0f;
+//		int count = 0;
+//		for (int i = -1; i < 2; i++)
+//			for (int j = -1; j < 2; j++)
+//				for (int k = -1; k < 2; k++) {
+//					int currentX = volumeCoord[0] + i;
+//					int currentY = volumeCoord[1] + j;
+//					int currentZ = volumeCoord[2] + k;
+//					if (currentX > 0 && currentX < xSize && currentY > 0 && currentY < ySize && currentZ > 0
+//							&& currentZ < zSize && this.hasSig(currentX, currentY, currentZ)) {
+//						result = result + this.getValueBasedOnVolumeCoordinate(currentX, currentY, currentZ, t);
+//						count++;
+//					}
+//				}
+//		return result / count;
+//	}
 
 }
