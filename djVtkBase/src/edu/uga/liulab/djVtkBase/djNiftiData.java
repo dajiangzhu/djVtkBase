@@ -185,28 +185,31 @@ public class djNiftiData {
 		return result / count;
 	}
 	
-//	public float[] getSigBasedOnPhysicalCoordinateRange(float x, float y, float z) {
-//		int[] volumeCoord;
-//		float[] physicalCoord = new float[3];
-//		physicalCoord[0] = x;
-//		physicalCoord[1] = y;
-//		physicalCoord[2] = z;
-//		volumeCoord = this.convertFromPhysicalToVolume(physicalCoord);
-//		float result = 0.0f;
-//		int count = 0;
-//		for (int i = -1; i < 2; i++)
-//			for (int j = -1; j < 2; j++)
-//				for (int k = -1; k < 2; k++) {
-//					int currentX = volumeCoord[0] + i;
-//					int currentY = volumeCoord[1] + j;
-//					int currentZ = volumeCoord[2] + k;
-//					if (currentX > 0 && currentX < xSize && currentY > 0 && currentY < ySize && currentZ > 0
-//							&& currentZ < zSize && this.hasSig(currentX, currentY, currentZ)) {
-//						result = result + this.getValueBasedOnVolumeCoordinate(currentX, currentY, currentZ, t);
-//						count++;
-//					}
-//				}
-//		return result / count;
-//	}
+	public float[] getSigBasedOnPhysicalCoordinateRange(float x, float y, float z) {
+		float[] avgSig = new float[this.tSize];
+		int[] volumeCoord;
+		float[] physicalCoord = new float[3];
+		physicalCoord[0] = x;
+		physicalCoord[1] = y;
+		physicalCoord[2] = z;
+		volumeCoord = this.convertFromPhysicalToVolume(physicalCoord);
+		float count = 0.0f;
+		for (int i = -1; i < 2; i++)
+			for (int j = -1; j < 2; j++)
+				for (int k = -1; k < 2; k++) {
+					int currentX = volumeCoord[0] + i;
+					int currentY = volumeCoord[1] + j;
+					int currentZ = volumeCoord[2] + k;
+					if (currentX > 0 && currentX < xSize && currentY > 0 && currentY < ySize && currentZ > 0
+							&& currentZ < zSize && this.hasSig(currentX, currentY, currentZ)) {
+						for (int t = 0; t < this.tSize; t++)
+							avgSig[t] += this.getValueBasedOnVolumeCoordinate(currentX, currentY, currentZ, t);
+						count++;
+					} //if
+				} //for k
+		for (int t = 0; t < this.tSize; t++)
+			avgSig[t] = avgSig[t]/count;
+		return avgSig;
+	}
 
 }
