@@ -185,8 +185,8 @@ public class djNiftiData {
 		return result / count;
 	}
 	
-	public float[] getSigBasedOnPhysicalCoordinateRange(float x, float y, float z) {
-		float[] avgSig = new float[this.tSize];
+	public double[] getSigBasedOnPhysicalCoordinateRange(float x, float y, float z) {
+		double[] avgSig = new double[this.tSize];
 		int[] volumeCoord;
 		float[] physicalCoord = new float[3];
 		physicalCoord[0] = x;
