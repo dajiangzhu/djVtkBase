@@ -217,6 +217,34 @@ public class djVtkData extends djVtkObj {
 							}
 
 						}
+						//add new
+						while (tmpStringArray1.length > 0 && tmpStringArray1[0].equalsIgnoreCase(djVtkDataDictionary.VTK_FIELDNAME_COLOR_SCALARS)) {
+							List<String> newScalarList = new ArrayList<String>();
+							String scalarName = tmpStringArray1[1];
+							do {
+								strLine = br.readLine();
+							} while (strLine.trim().length() == 0);// lookup_table
+							for (int i = 0; i < this.nCellNum; i++) {
+								do {
+									strLine = br.readLine();
+								} while (strLine.trim().length() == 0);
+								tmpStringArray2 = strLine.split("\\s+");
+								for(int k=0;k<tmpStringArray2.length/3;k++)
+									newScalarList.add( tmpStringArray2[k*3]+" "+tmpStringArray2[k*3+1]+" "+tmpStringArray2[k*3+2] );
+							}
+							this.cellsScalarData.put(scalarName, newScalarList);
+
+							do {
+								strLine = br.readLine();
+							} while (strLine != null && strLine.trim().length() == 0);
+
+							if (strLine != null) {
+								tmpStringArray1 = strLine.split("\\s+");
+							} else {
+								break;
+							}
+
+						}
 					}// END OF CELL_DATA
 				}// if(tmpStringArray.length > 0)
 			}// while
@@ -381,16 +409,29 @@ public class djVtkData extends djVtkObj {
 			
 			// print Cell_Data
 			if (this.cellsScalarData.size() > 0) {
-				fw.write("CELL_DATA " + this.nCellNum + "\r\n");
+				fw.write("CELL_DATA " + this.cellsOutput.size() + "\r\n");
 				Iterator iterPointData = this.cellsScalarData.keySet().iterator();
 				while (iterPointData.hasNext()) {
 					String tmpAttriName = (String) iterPointData.next();
 					fw.write("COLOR_SCALARS " + tmpAttriName + " 3 \r\n");
-					for (int i = 0; i < this.cellsScalarData.get(tmpAttriName).size(); i++) {
-						fw.write(this.cellsScalarData.get(tmpAttriName).get(i) + "\r\n");
+					for (int i = 0; i < this.cellsOutput.size(); i++) {
+						fw.write(this.cellsScalarData.get(tmpAttriName).get(this.cellsOutput.get(i).cellId) + "\r\n");
 					}
 				}
 			}
+			
+//			// print Cell_Data
+//			if (this.cellsScalarData.size() > 0) {
+//				fw.write("CELL_DATA " + this.nCellNum + "\r\n");
+//				Iterator iterPointData = this.cellsScalarData.keySet().iterator();
+//				while (iterPointData.hasNext()) {
+//					String tmpAttriName = (String) iterPointData.next();
+//					fw.write("COLOR_SCALARS " + tmpAttriName + " 3 \r\n");
+//					for (int i = 0; i < this.cellsScalarData.get(tmpAttriName).size(); i++) {
+//						fw.write(this.cellsScalarData.get(tmpAttriName).get(i) + "\r\n");
+//					}
+//				}
+//			}
 
 		} catch (IOException ex) {
 			Logger.getLogger(djVtkData.class.getName()).log(Level.SEVERE, null, ex);
@@ -478,7 +519,7 @@ public class djVtkData extends djVtkObj {
 				while (iterPointData.hasNext()) {
 					String tmpAttriName = (String) iterPointData.next();
 					//for render COLOR_SCALARS
-					//fw.write("COLOR_SCALARS " + tmpAttriName + " 3 \r\n");
+//					fw.write("COLOR_SCALARS " + tmpAttriName + " 3 \r\n");
 					//end of for render COLOR_SCALARS
 					fw.write("SCALARS " + tmpAttriName + " float 1 \r\n");
 					fw.write("LOOKUP_TABLE default \r\n");
