@@ -49,4 +49,9 @@ public class djSurService {
         }
         sur1.writeToVtkFile(outFileName);
     }
+    
+    public void surfaceCombine(String surListFile, String outPutFile)
+    {
+    	
+    }
 }
