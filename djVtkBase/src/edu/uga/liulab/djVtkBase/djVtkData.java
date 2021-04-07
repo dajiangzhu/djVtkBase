@@ -536,10 +536,11 @@ public class djVtkData extends djVtkObj {
 				while (iterCellData.hasNext()) {
 					String tmpAttriName = (String) iterCellData.next();
 					//for render COLOR_SCALARS
-					fw.write("COLOR_SCALARS " + tmpAttriName + " 3 \r\n");
+					//fw.write("COLOR_SCALARS " + tmpAttriName + " 3 \r\n");
 					//end of for render COLOR_SCALARS
-//					fw.write("SCALARS " + tmpAttriName + " float 1 \r\n");
-//					fw.write("LOOKUP_TABLE default \r\n");
+					
+					fw.write("SCALARS " + tmpAttriName + " float 1 \r\n");
+					fw.write("LOOKUP_TABLE default \r\n");
 					for (int i = 0; i < this.cellsScalarData.get(tmpAttriName).size(); i++) {
 						fw.write(this.cellsScalarData.get(tmpAttriName).get(i) + "\r\n");
 					}
