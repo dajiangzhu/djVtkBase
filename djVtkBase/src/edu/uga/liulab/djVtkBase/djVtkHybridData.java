@@ -39,6 +39,9 @@ public class djVtkHybridData {
 		this.fiberData = fiberData;
 	}
 
+	public djVtkHybridData() {
+
+	}
 	public djVtkHybridData(djVtkSurData surface, djVtkFiberData fiber) {
 		this.surfaceData = surface;
 		this.fiberData = fiber;
